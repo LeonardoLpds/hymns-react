@@ -6,12 +6,12 @@ export default function useHttp() {
   const [loading, setLoading] = useState(false);
   const [registerRequest] = useServiceWorker();
   
-  const request = (url: string) => {
+  const request = (method: string, url: string, data?: any) => {
     setLoading(true);
     axios
-      .get(url)
+      .request({url, method, data})
       .then(response => console.log("request done", response.data))
-      .catch((e) => registerRequest(url))
+      .catch((e) => registerRequest(e))
       .finally(() => setLoading(false));
   };
 

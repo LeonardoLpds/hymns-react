@@ -1,8 +1,18 @@
+import { AxiosError } from "axios";
+
 export default function useServiceWorker() {
-  const registerRequest = async (url: string) => {
-    if ("serviceWorker" in navigator && "SyncManager" in window) {
-      const registration = (await navigator.serviceWorker.ready) as any;
-      await registration.sync.register("send-request");
+  const registerRequest = async (error: AxiosError) => {
+    console.log(error);
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.controller!.postMessage({
+        type: "sync",
+        options: {
+          headers: error.config?.headers,
+          method: error.config?.method?.toUpperCase(),
+          body: error.config?.data
+        },
+        url: error.config?.baseURL + error.config?.url!,
+      });
     }
   };
 
