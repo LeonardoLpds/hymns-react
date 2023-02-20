@@ -1,0 +1,13 @@
+.form-field {
+  &:focus-within {
+    @apply border-blue-500 shadow shadow-blue-500/50;
+  }
+}
+
+.button {
+  @apply px-4 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-r-lg;
+}
+
+.input {
+  @apply py-4 px-4 w-full focus:outline-none rounded-lg;
+}
