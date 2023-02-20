@@ -6,6 +6,9 @@
 
 .button {
   @apply px-4 py-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-r-lg;
+  &[disabled] {
+    @apply opacity-75
+  }
 }
 
 .input {
