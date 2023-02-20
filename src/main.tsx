@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import "./index.scss";
-import registerServiceWorker from "./libs/service-worker";
 import Router from "./Router";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
@@ -11,4 +10,12 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   </React.StrictMode>
 );
 
-registerServiceWorker();
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/service-worker")
+      .catch((error) => {
+        console.error("Service worker registration failed: ", error);
+      });
+  });
+}
