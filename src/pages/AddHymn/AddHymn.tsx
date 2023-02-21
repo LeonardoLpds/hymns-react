@@ -3,8 +3,13 @@ import Spinner from "../../components/Spinner";
 import useHttp from "../../hooks/use-http";
 
 export default function AddHymn() {
-  const [request, loading] = useHttp();
+  const [request, state] = useHttp();
+  console.log(state);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  function postHymn(hymn: number) {
+    request("POST", "/todo", { hymn: hymn });
+  }
 
   return (
     <div className="form-field flex border rounded-lg items-stretch">
@@ -21,12 +26,10 @@ export default function AddHymn() {
       />
       <button
         className="button flex"
-        onClick={() =>
-          request("POST", "/todo", { hymn: inputRef.current?.value })
-        }
-        disabled={loading}
+        onClick={() => postHymn(Number(inputRef.current?.value))}
+        disabled={state.status == "LOADING"}
       >
-        {loading && <Spinner />}
+        {state.status == "LOADING" && <Spinner />}
         Salvar
       </button>
     </div>
