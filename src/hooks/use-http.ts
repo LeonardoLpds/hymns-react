@@ -20,17 +20,17 @@ export default function useHttp() {
     await axios
       .request({ url: url, method, data })
       .then((response) => dispatch({ type: "DONE", data: response.data }))
-      .catch((error) => {
+      .catch((error: AxiosError) => {
         try {
           const response = errorHandler(error);
           dispatch({ type: "STORED", data: response });
         } catch {
-          dispatch({ type: "ERROR", data: error });
+          dispatch({ type: "ERROR", data: error.message });
         }
       });
   };
 
-  return [request, state] as const;
+  return [state, request] as const;
 }
 
 function reducer(state: State, action: Action) {
