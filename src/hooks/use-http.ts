@@ -20,9 +20,9 @@ export default function useHttp() {
     await axios
       .request({ url: url, method, data })
       .then((response) => dispatch({ type: "DONE", data: response.data }))
-      .catch((error: AxiosError) => {
+      .catch(async (error: AxiosError) => {
         try {
-          const response = errorHandler(error);
+          const response = await errorHandler(error);
           dispatch({ type: "STORED", data: response });
         } catch {
           dispatch({ type: "ERROR", data: error.message });
@@ -55,7 +55,7 @@ function reducer(state: State, action: Action) {
   }
 }
 
-function errorHandler(axiosError: AxiosError) {
+async function errorHandler(axiosError: AxiosError) {
   const { headers, method, baseURL, url, data: body } = axiosError.config!;
 
   if (
@@ -63,14 +63,13 @@ function errorHandler(axiosError: AxiosError) {
     axiosError.code == "ERR_NETWORK" &&
     method?.toUpperCase() == "POST"
   ) {
-    navigator.serviceWorker.controller?.postMessage(
-      {
-        type: "sync",
-        options: { method: method?.toUpperCase(), headers, body },
-        url: baseURL + url!,
-      },
-      [new MessageChannel().port2]
-    );
+    const sw = await navigator.serviceWorker.ready;
+    if (!sw || !sw.active) throw axiosError;
+    sw.active.postMessage({
+      type: "sync",
+      options: { method: method?.toUpperCase(), headers, body },
+      url: baseURL + url!,
+    });
     return { msg: "Request stored" };
   }
   throw axiosError;
