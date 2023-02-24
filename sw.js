@@ -28,10 +28,13 @@ self.addEventListener("sync", async (event) => {
             dbRemove(request.key);
           })
           .catch((error) => {
-            channel.postMessage(error);
             const payload = { ...request, tries: (request.tries += 1), error };
             dbPut(payload, request.key);
             if (payload.tries < 3) self.registration.sync.register(request.key);
+            else {
+              channel.postMessage(error);
+              dbRemove(request.key);
+            }
           });
       });
     };
