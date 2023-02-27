@@ -2,12 +2,10 @@ export const channel = () => new BroadcastChannel("app-channel");
 
 export const messageCallback = (channel: BroadcastChannel) => {
   channel.onmessage = (message) => {
-    if (Array.isArray(message.data.errors) && message.data.errors.length > 0) {
+    if (message.data.error) {
       const storage = localStorage.getItem("requestFails");
       const requests = storage ? JSON.parse(storage) : [];
-      message.data.errors.forEach((error: any) => {
-        requests.push(JSON.parse(error.options.body));
-      });
+      requests.push(JSON.parse(message.data.error.options.body));
       localStorage.setItem("requestFails", JSON.stringify(requests));
     }
   };

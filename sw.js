@@ -32,7 +32,7 @@ self.addEventListener("sync", async (event) => {
             dbPut(payload, request.key);
             if (payload.tries < 3) self.registration.sync.register(request.key);
             else {
-              channel.postMessage(error);
+              channel.postMessage({error});
               dbRemove(request.key);
             }
           });
@@ -64,9 +64,10 @@ const fetchData = async (url, options) => {
     throw data;
   } catch (error) {
     throw {
-      errors: [
-        { msg: "Falha ao fazer o request", nestedErrors: error, url, options },
-      ],
+      message: "Falha ao fazer o request",
+      nestedErrors: error,
+      url,
+      options,
     };
   }
 };
