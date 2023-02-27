@@ -61,6 +61,9 @@ export default function AddHymn() {
   function postHymn(event: FormEvent) {
     event.preventDefault();
     setDirty(false);
-    request("POST", "/todo", { hymn: Number(value) });
+    request("POST", "/hymn", {
+      number: Number(value),
+      timestamp: new Date().getTime(),
+    });
   }
 }
